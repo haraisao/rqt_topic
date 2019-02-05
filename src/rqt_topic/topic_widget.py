@@ -35,7 +35,7 @@ import os
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, QTimer, Signal, Slot
-from python_qt_binding.QtGui import QIcon
+from python_qt_binding.QtGui import QIcon, QPixmap
 from python_qt_binding.QtWidgets import QHeaderView, QMenu, QTreeWidgetItem, QWidget
 import roslib
 import rospkg
@@ -344,6 +344,10 @@ class TopicWidget(QWidget):
                 setSectionResizeMode(QHeaderView.Interactive)
             else:
                 setSectionResizeMode(QHeaderView.ResizeToContents)
+    def getPixmapIcon(self, name):
+        rp=rospkg.RosPack()
+        icon_file = os.path.join(rp.get_path('rqt_gui'), 'resource', 'icons', name+'.png')
+        return QIcon(QPixmap(icon_file))
 
     @Slot('QPoint')
     def on_topics_tree_widget_customContextMenuRequested(self, pos):
@@ -353,8 +357,8 @@ class TopicWidget(QWidget):
 
         # show context menu
         menu = QMenu(self)
-        action_item_expand = menu.addAction(QIcon.fromTheme('zoom-in'), 'Expand All Children')
-        action_item_collapse = menu.addAction(QIcon.fromTheme('zoom-out'), 'Collapse All Children')
+        action_item_expand = menu.addAction(QIcon.fromTheme('zoom-in', self.getPixmapIcon('zoom-in')), 'Expand All Children')
+        action_item_collapse = menu.addAction(QIcon.fromTheme('zoom-out', self.getPixmapIcon('zoom-out')), 'Collapse All Children')
         action = menu.exec_(self.topics_tree_widget.mapToGlobal(pos))
 
         # evaluate user action
